@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+
+	<!-- <context:annotation-config></context:annotation-config> -->
+	<context:component-scan base-package="com.psl"></context:component-scan>
+
+	<!-- <bean class="com.psl.entity.Employee" id="emp" init-method="abc" destroy-method="pqr" 
+		autowire="constructor"> setter/property DI <constructor-arg name="id" value="2"></constructor-arg> 
+		<constructor-arg name="name" value="xyz"></constructor-arg> <constructor-arg 
+		name="addr" ref="address"></constructor-arg> <property name="id" value="1"></property> 
+		<property name="name" value="Nikhil"></property> <property name="addr" ref="address"></property> 
+		<constructor-arg name="id" value="2"></constructor-arg> <constructor-arg 
+		name="name" value="xyz"></constructor-arg> </bean> -->
+
+	<!-- <bean class="com.psl.entity.Address" id="address"> setter/property 
+		DI <property name="city" value="Pune"></property> <property name="street" 
+		value="Karve Road"></property> <property name="zip" value="411038"></property> 
+		</bean> -->
+
+
+	<bean class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+		id="ds">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+		<property name="url" value="jdbc:mysql://localhost:3306/emp"></property>
+		<property name="username" value="root"></property>
+		<property name="password" value="root"></property>
+	</bean>
+
+	<bean class="org.springframework.jdbc.core.JdbcTemplate" id="template">
+		<property name="dataSource" ref="ds"></property>
+	</bean>
+
+	<bean class="com.psl.service.EmployeeService" id="service">
+		<property name="dao" ref="dao"></property>
+	</bean>
+
+	<bean class="com.psl.dao.EmployeeDAOImpl" id="dao">
+		<property name="template" ref="template"></property>
+	</bean>
+
+	<bean class="com.psl.client.Client" id="client">
+		<property name="service" ref="service"></property>
+	</bean>
+
+
+	<!-- AOP -->
+
+	<bean class="com.psl.aop.Performer" id="performer"></bean>
+	<bean class="com.psl.aop.Audience" id="audience"></bean>
+
+	<!-- <aop:config>
+		<aop:aspect ref="audience">
+		
+			<aop:before method="takeSeats"
+				pointcut="execution(* com.psl.aop.Performer.perform(..))" />
+				<aop:before method="switchOffMobiles" pointcut="execution(* com.psl.aop.Performer.perform(..))"/>
+			
+				<aop:after-returning method="applaud" pointcut="execution(* com.psl.aop.Performer.perform(..))"/>
+				<aop:after-throwing method="demandRefund" pointcut="execution(* com.psl.aop.Performer.perform(..))"/>
+				<aop:after method="goHome"
+				pointcut="execution(* com.psl.aop.Performer.perform(..))" />
+				
+				<aop:around method="watchPerformance" pointcut="execution(* com.psl.aop.Performer.perform(..))"/>
+		</aop:aspect>
+	</aop:config> -->
+	
+	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+
+</beans>
